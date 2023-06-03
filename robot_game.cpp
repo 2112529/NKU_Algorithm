@@ -6,33 +6,56 @@
 using namespace std;
 const int MAXN = 500010;
 int n, d, k;
-int g=-1;
+int g=0;
 
-struct pair {
+struct my_pair {
     int x;
     int s;
-}pairs[MAXN];
+};
 long long score;
 
 
 int main()
 {
     cin >> n >> d >> k;
+    vector<my_pair> pairs(n + 1);
     for (int i = 1; i <= n; i++)
         cin >> pairs[i].x >> pairs[i].s;
 
+    // 将所有格子按分数从大到小排序
+    sort(pairs.begin() + 1, pairs.end(), [](my_pair a, my_pair b) {
+        return a.s > b.s;
+        });
+
     //1.选择贪心算法进行求解，实现局部最优
     //每一次都选择范围内最优的进行求解
+    int lastPos = 0;
     while (score < k)
     {
-        //如何确定循环一定能够终止？
         g++;
-        for (int i = max(d - g, 1); i <= d + g; i++)
+        bool found = false;
+        for (int i = 1; i <= n; i++)
         {
-            //检索出pairs中最优的选择
+            // 计算格子i与上一次跳跃位置之间的距离
+            int distance = abs(pairs[i].x - lastPos);
+            // 如果在当前跳跃范围内，就选择这个格子
+            if (pairs[i].x>lastPos && distance >= max(d - g, 1) && distance <= d + g)
+            {
+                score += pairs[i].s;
+                lastPos = pairs[i].x;
+                found = true;
+                break;
+            }
         }
+        // 如果在当前跳跃范围内找不到格子，就结束循环
+        if (!found)
+            break;
     }
-    cout << g << endl;
+    // 如果达到了目标分数，输出金币数量，否则输出-1
+    if (score >= k)
+        cout << g << endl;
+    else
+        cout << "-1" << endl;
     return 0;
     //2.采用dfs进行深度优先搜索尝试求解
      
