@@ -11,6 +11,7 @@ struct my_pair {
 }pairs[MAXN];
 long long  ok, lpos, rpos;
 long long  n, d, k;
+int path[MAXN];  // Add path array
 bool check(int g)
 {
     lpos = max(d - g, long long(1));//ÌøµÄ×î¶Ì¾àÀë 
@@ -35,7 +36,10 @@ bool check(int g)
         while (!dq.empty() && pairs[i].x - pairs[dq.front()].x > rpos)
             dq.pop_front();
         if (!dq.empty())
+        {
             f[i] = f[dq.front()] + pairs[i].s;
+            path[i] = dq.front();
+        }
         else
             f[i] = -999999999999;
         if (f[i] >= k)
@@ -66,6 +70,19 @@ int main()
             l = m + 1;
         m = (l + r) / 2;
     }
-    cout << ans;
+    cout << ans<<endl;
+    if (ans != -1) {
+        vector<int> best_path;
+        i = n;
+        while (i > 0) {  // Trace back the path
+            best_path.push_back(i);
+            i = path[i];
+        }
+        reverse(best_path.begin(), best_path.end());  // Reverse the path
+        for (int pos : best_path) {
+            cout << pos << " ";
+        }
+        cout << endl;
+    }
     return 0;
 }

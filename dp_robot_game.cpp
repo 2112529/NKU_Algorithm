@@ -5,6 +5,7 @@
 using namespace std;
 const int MAXN = 500005;
 long long f[MAXN];
+int path[MAXN];  // Add path array
 struct my_pair {
     int x;
     int s;
@@ -23,7 +24,10 @@ bool check(int g)
         {
             if (pairs[i].x-pairs[j].x < lpos) continue;
             if (pairs[i].x - pairs[j].x > rpos) break;
-            f[i] = max(f[i], f[j] + pairs[i].s);
+            if (f[j] + pairs[i].s > f[i]) {   // If a better path is found
+                f[i] = f[j] + pairs[i].s;     // Update the best score for this position
+                path[i] = j;                  // Record the previous position on the path
+            }
             if (f[i] >= k)
                 return 1;
         }
@@ -51,6 +55,20 @@ int main()
             l = m + 1;
         m = (l + r) / 2;
     }
-    cout << ans;
+    cout << ans<<endl;
+    // Print the path if a solution was found
+    if (ans != -1) {
+        vector<int> best_path;
+        i = n;
+        while (i > 0) {  // Trace back the path
+            best_path.push_back(i);
+            i = path[i];
+        }
+        reverse(best_path.begin(), best_path.end());  // Reverse the path
+        for (int pos : best_path) {
+            cout << pos << " ";
+        }
+        cout << endl;
+    }
     return 0;
 }
